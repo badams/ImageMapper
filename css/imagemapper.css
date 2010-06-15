@@ -1,0 +1,62 @@
+body {
+    margin: 0;
+    padding : 0;
+    font-size: 12px;
+}
+
+.ui-tabs .ui-tabs-nav .toolbar {float:right;}
+
+#imagemapper {
+    width : 755px;
+}
+
+#map_editor_wrapper {
+    padding: 5px 0;
+}
+
+#map_editor_wrapper #map_editor {float: left;}
+#map_editor_wrapper .sidebar {padding: 0 5px; width: 200px; float: left;}
+
+.sidebar .ui-widget-header {
+    display: block;
+    padding: 2px 5px;
+}
+
+.sidebar .panel .ui-widget-content {
+    padding: 2px 5px;
+}
+
+.sidebar .panel .ui-widget-content dt {
+    float: left;
+    margin: 0 10px 0 0;
+}
+
+ #toolbar {
+    display:block;
+    float:left;
+    width: 32px;
+    padding: 2px;
+    margin-right: 2px;
+}
+
+
+.image_mapper_container {
+    width : 500px;
+    height : 600px;
+    overflow : scroll;
+    cursor : crosshair;
+}
+
+
+.image_mapper_mask{
+    top : 0px;
+    left : 0px;
+    position: absolute;
+    opacity : 0;
+    overflow : hidden;
+}
+
+#map_editor area {
+    cursor : move;
+}
+
