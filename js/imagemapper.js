@@ -265,9 +265,9 @@ MapEditor.prototype = {
                 this.createPolygon();
                 this.drawing = true;
                 this.polygons.push(new Polygon({data : {index : this.polygons.length}}));
-                this.$container.trigger('polygonCreated');
                 this.selectNode();
                 this.currentPolygon.push({x : coords.x, y : coords.y});
+                this.$container.trigger('polygonCreated');
             }
 
             if (this.drawing) {
