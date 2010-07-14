@@ -15,28 +15,22 @@
             handle : 'ul'
         });
 
-        $('#toolbar button').button({
-            text: false,
-            icons: {
-                primary: 'ui-icon-arrowthick-2-se-nw'
-            }
-        });
-
         $('li.toolbar button').button();
-
-        $('.sidebar #polygon-list').accordion()
 
         map_editor = new MapEditor('#map_editor', {
             map_id : 'bleh123',
             image : 'http://farm4.static.flickr.com/3433/3986710128_48958f7369_o.jpg', 
             events : {
                 polygonCreated : function () {
-                    console.log(this.currentNode);
+                    var poly = this.currentPolygon;
+                    poly.data  = $.extend(poly.data, {
+                        name : 'Line-' + poly.data.index,
+                        href : ''
+                    });
                 },
                 selectNode : function () {
                     createInspector();
-                },
-                
+                }
             }
         });
 
@@ -44,9 +38,8 @@
             var target = $(e.target);
             
             if (target.is('button.button-edit')) {
-                e.preventDefault();
-                polygonDialog(map_editor.currentPolygon);
-                return false;
+                var poly = map_editor.polygons[target[0].parentNode.getAttribute('data-index')];
+                polygonDialog(poly);
             }
         });
 
@@ -68,9 +61,14 @@
             var poly = map_editor.polygons[p];
             html += '<div class="header" data-index="' + poly.data.index + '">';
             html += '<button class="button-edit">Edit</button>';
-            html += '<a href="#">Polygon-' + poly.data.index + '</a>';
+            html += '<a href="#">' + poly.data.name + '</a>';
             html += '</div>'
-            html += '<div>' + poly.nodes.length + '</div>';
+            html += '<dl>';
+            for (var prop in poly.data) {
+                html += '<dt>' + prop + '</dt>';
+                html += '<dd>' + poly.data[prop]+ '</dd>';
+            }
+            html += '</dl>';
         }        
 
         accord.innerHTML = html;
@@ -86,7 +84,12 @@
     };
     // {{{ polygonDialog
     var polygonDialog = function (polygon) {
-        $('<p>lol</p>').dialog();
+        var html = '<form id="polygon_dialog" data-poly="'+ polygon.data.index +'">';
+        html += '<dl>';
+        html += '<dt>Name</dt>';
+        html += '<dd><input type="text" name="p_name" value="'+polygon.data.name+'" /></dd>';
+        html += '</dl></form>';
+        $(html).dialog();
     };
     // }}}
 }).call(window, jQuery);
