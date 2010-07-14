@@ -31,6 +31,12 @@ body {
     margin: 0 10px 0 0;
 }
 
+.sidebar .header button {
+    float: right;
+    font-size: 10px;
+    margin: 2px;
+} 
+
  #toolbar {
     display:block;
     float:left;

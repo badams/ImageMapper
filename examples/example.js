@@ -40,6 +40,16 @@
             }
         });
 
+        sidebar.bind('click', function (e) {
+            var target = $(e.target);
+            
+            if (target.is('button.button-edit')) {
+                e.preventDefault();
+                polygonDialog(map_editor.currentPolygon);
+                return false;
+            }
+        });
+
 
         window.map_editor = map_editor;
 
@@ -50,28 +60,33 @@
     // {{{ Support Methods
     var createInspector = function () {
         var accord = document.createElement('div');
+        var html = '';
 
         accord.setAttribute('class', 'polygon-list');
 
-        var html = '';
-
         for (var p = map_editor.polygons.length-1; p >= 0; p--) {
-            console.log(p);
             var poly = map_editor.polygons[p];
-            html += '<h3 data-index="' + poly.data.index + '"><a href="#">Polygon-' + poly.data.index + '</a></h3>';
+            html += '<div class="header" data-index="' + poly.data.index + '">';
+            html += '<button class="button-edit">Edit</button>';
+            html += '<a href="#">Polygon-' + poly.data.index + '</a>';
+            html += '</div>'
             html += '<div>' + poly.nodes.length + '</div>';
-            
         }        
 
         accord.innerHTML = html;
 
-
         sidebar[0].innerHTML = '';
         sidebar[0].appendChild(accord);
 
+        sidebar.find('button').button();
         sidebar.find('.polygon-list').accordion({
-            active : 'h3[data-index=' + map_editor.currentPolygon.data.index + ']'
+            header : 'div.header',
+            active : 'div.header[data-index=' + map_editor.currentPolygon.data.index + ']'
         });
+    };
+    // {{{ polygonDialog
+    var polygonDialog = function (polygon) {
+        $('<p>lol</p>').dialog();
     };
     // }}}
 }).call(window, jQuery);
