@@ -15,7 +15,7 @@ body {
 }
 
 #map_editor_wrapper #map_editor {float: left;}
-#map_editor_wrapper .sidebar {padding: 0 5px; width: 200px; float: left;}
+#map_editor_wrapper .sidebar {padding: 0 5px; width: 245px; float: left;}
 
 #imagemapper .sidebar button {font-size: 10px;}
 
@@ -48,14 +48,6 @@ body {
 
 .sidebar input {
     width: 100px;
-}
-
- #toolbar {
-    display:block;
-    float:left;
-    width: 32px;
-    padding: 2px;
-    margin-right: 2px;
 }
 
 #polygon_form {
