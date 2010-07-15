@@ -355,6 +355,57 @@ MapEditor.prototype = {
 };
 // }}}
 // }}}
+// {{{ MapViewer(selector, options)
+// {{{ Constructor
+var MapViewer = function (selector, settings) {
+    this.element = jQuery(selector); 
+    this.initialized = false;;
+
+    for (var e in this.events) {
+        this.element.bind(e, $.proxy(this.events[e], this));
+    }
+
+    if ('string' === typeof settings.image) {
+        this.command('load_image', settings.image);
+    }
+
+    this.polygons = settings.polygons || [];
+}
+// }}}
+// {{{ Api
+MapViewer.prototype = {
+    command : function (cmd, args) {
+        this.commands[cmd].call(this, args || []);
+    },
+    commands : {
+        'load_image' : function (src) {
+            var img = new Image();
+
+            img.onload = $.proxy(function () {
+                this.element.trigger('image_loaded', img);
+            }, this);
+
+            img.src = src;
+        }
+    },
+    events : {
+        'init' : function () {
+            this.initialized = true;
+            console.log('Map Viewer initialized.', this);
+        },
+
+        'image_loaded' : function (e, img) {
+            this.image = img;
+            console.log('Image Loaded', this.image); 
+            if (false === this.initialized) {
+                this.element.trigger('init');
+            }
+        }
+    }
+};
+// }}}
+// }}}
+// {{{ 
 // {{{ Polygon(options)
 // {{{ Constructor
 var Polygon = function (options) {
