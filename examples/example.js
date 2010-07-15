@@ -8,10 +8,16 @@
     // {{{ document.ready
     $(document).ready(function () {
         
-        map_viewer = $('#map_viewer');
         sidebar = $('#map_editor_wrapper .sidebar');
 
-        $('#imagemapper').tabs().draggable({
+        $('#imagemapper').tabs({
+            show : function (event, ui) {
+                if ('Preview' === ui.tab.innerHTML) {
+                    var data = map_editor.exportData();
+                    map_viewer = new MapViewer('#map_viewer', data);
+                }
+            }
+        }).draggable({
             handle : 'ul'
         });
 
