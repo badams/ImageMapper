@@ -116,29 +116,47 @@ MapEditor.prototype = {
     // }}}
     // {{{ selectNode(target)
     selectNode : function (node, polygon) {
+        if (0 < this.polygons.length) {
+            if ('object' === typeof node) {
+                polygon = node.getAttribute('data-polygon');
+                node = node.getAttribute('data-node');
+            }
 
-        if ('object' === typeof node) {
-            polygon = node.getAttribute('data-polygon');
-            node = node.getAttribute('data-node');
+            if ('undefined' === typeof polygon ) {
+                polygon = this.polygons.length - 1;
+            }
+
+            if ('undefined' === typeof node) {
+                node = this.polygons[polygon].nodes.length - 1;
+            }
+
+            this.currentPolygon = this.polygons[polygon];
+            this.currentNode = this.currentPolygon.nodes[node];
+            this.drawPolys();
+            this.$container.trigger('selectNode');
         }
-
-        if ('undefined' === typeof polygon ) {
-            polygon = this.polygons.length - 1;
-        }
-
-        if ('undefined' === typeof node) {
-            node = this.polygons[polygon].nodes.length - 1;
-        }
-
-        this.currentPolygon = this.polygons[polygon];
-        this.currentNode = this.currentPolygon.nodes[node];
-        this.drawPolys();
-        this.$container.trigger('selectNode');
     },        
     // }}}
     // {{{ createPolygon()
     createPolygon : function () {
                 
+    },
+    // }}}
+    // {{{ removePolygon()
+    removePolygon : function (index) {
+        if (1 === this.polygons.length) {
+            this.polygons = [];
+        } else {
+            this.polygons.splice(index, 1);
+        }
+   
+        this.selectNode(); 
+        this.drawPolys();
+    },
+    // }}}
+    // {{{ getPolygonIndex(poly)
+    getPolygonIndex : function (poly) {
+        return this.polygons.indexOf(poly);
     },
     // }}}
     // {{{ createMapArea(poly)
@@ -151,7 +169,7 @@ MapEditor.prototype = {
      */
     createMapArea : function (poly) {
 
-        var index = poly.getData('index');
+        var index = this.getPolygonIndex(poly);
 
         for (var i = 0, l = poly.nodes.length; i < l;i++) {
 
@@ -264,7 +282,7 @@ MapEditor.prototype = {
             if (!this.drawing && !this.dragging) {
                 this.createPolygon();
                 this.drawing = true;
-                this.polygons.push(new Polygon({data : {index : this.polygons.length}}));
+                this.polygons.push(new Polygon());
                 this.selectNode();
                 this.currentPolygon.push({x : coords.x, y : coords.y});
                 this.$container.trigger('polygonCreated');
