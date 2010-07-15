@@ -11,7 +11,7 @@
         map_viewer = $('#map_viewer');
         sidebar = $('#map_editor_wrapper .sidebar');
 
-        $('#imagemapper').tabs().resizable().draggable({
+        $('#imagemapper').tabs().draggable({
             handle : 'ul'
         });
 
@@ -24,8 +24,8 @@
                 polygonCreated : function () {
                     var poly = this.currentPolygon;
                     poly.data  = $.extend(poly.data, {
-                        name : 'Line-' + poly.data.index,
-                        href : ''
+                        name : 'Line-' + map_editor.getPolygonIndex(poly),
+                        href : '#some-anchor'
                     });
                 },
                 selectNode : function () {
@@ -37,9 +37,18 @@
         sidebar.bind('click', function (e) {
             var target = $(e.target);
             
-            if (target.is('button.button-edit')) {
-                var poly = map_editor.polygons[target[0].parentNode.getAttribute('data-index')];
-                polygonDialog(poly);
+            if (target.is('button.save-poly')) {
+                e.preventDefault();
+                var $form = target.parents('form:first'), index = $form.attr('data-index');
+                map_editor.polygons[index].data.name = $form.find('input[name=p_name]').val();
+                map_editor.polygons[index].data.href = $form.find('input[name=p_href]').val();
+                createInspector();
+            }
+
+            if (target.is('button.remove')) {
+                var index = target.parents('div.header:first').attr('data-index');
+                map_editor.removePolygon(index);
+                createInspector();
             }
         });
 
@@ -59,16 +68,11 @@
 
         for (var p = map_editor.polygons.length-1; p >= 0; p--) {
             var poly = map_editor.polygons[p];
-            html += '<div class="header" data-index="' + poly.data.index + '">';
-            html += '<button class="button-edit">Edit</button>';
+            html += '<div class="header" data-index="' + map_editor.getPolygonIndex(poly) + '">';
+            html += '<button class="remove">remove</button>';
             html += '<a href="#">' + poly.data.name + '</a>';
             html += '</div>'
-            html += '<dl>';
-            for (var prop in poly.data) {
-                html += '<dt>' + prop + '</dt>';
-                html += '<dd>' + poly.data[prop]+ '</dd>';
-            }
-            html += '</dl>';
+            html += polygonForm(poly);
         }        
 
         accord.innerHTML = html;
@@ -76,20 +80,29 @@
         sidebar[0].innerHTML = '';
         sidebar[0].appendChild(accord);
 
-        sidebar.find('button').button();
+        sidebar.find('button.save-poly').button();
+        sidebar.find('button.remove').button({text : false, icons : {primary : 'ui-icon-trash'}});
         sidebar.find('.polygon-list').accordion({
             header : 'div.header',
-            active : 'div.header[data-index=' + map_editor.currentPolygon.data.index + ']'
+            active : 'div.header[data-index=' + map_editor.currentPolygon.data.index + ']',
+            change : function (e, ui) {
+                console.log(ui);
+            }
         });
     };
     // {{{ polygonDialog
-    var polygonDialog = function (polygon) {
-        var html = '<form id="polygon_dialog" data-poly="'+ polygon.data.index +'">';
+    var polygonForm = function (polygon) {
+        var html = '<form id="polygon_form" data-index="'+ map_editor.getPolygonIndex(polygon) +'">';
         html += '<dl>';
-        html += '<dt>Name</dt>';
+        html += '<dt>Name :</dt>';
         html += '<dd><input type="text" name="p_name" value="'+polygon.data.name+'" /></dd>';
-        html += '</dl></form>';
-        $(html).dialog();
+        html += '<dt>href :</dt>';
+        html += '<dd><input type="text" name="p_href" value="'+polygon.data.href+'" /></dd>';
+        html += '</dl>';
+        html += '<button class="save-poly">Change</button>';
+        html += '</form>';
+
+        return html;
     };
     // }}}
 }).call(window, jQuery);

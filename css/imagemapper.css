@@ -17,6 +17,8 @@ body {
 #map_editor_wrapper #map_editor {float: left;}
 #map_editor_wrapper .sidebar {padding: 0 5px; width: 200px; float: left;}
 
+#imagemapper .sidebar button {font-size: 10px;}
+
 .sidebar .ui-widget-header {
     display: block;
     padding: 2px 5px;
@@ -34,8 +36,19 @@ body {
 .sidebar .header button {
     float: right;
     font-size: 10px;
-    margin: 2px;
+    margin: 1px 2px 0 0;
+    padding : 2px 5px;
 } 
+
+
+.sidebar dt {
+    float: left;
+    width : 60px;
+}
+
+.sidebar input {
+    width: 100px;
+}
 
  #toolbar {
     display:block;
@@ -45,6 +58,13 @@ body {
     margin-right: 2px;
 }
 
+#polygon_form {
+    padding: 10px;
+}
+
+#polygon_form button {
+    float: right;
+}
 
 .image_mapper_container {
     width : 500px;
@@ -65,4 +85,6 @@ body {
 #map_editor area {
     cursor : move;
 }
+
+
 
