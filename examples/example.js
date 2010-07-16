@@ -23,10 +23,13 @@
 
         $('li.toolbar button').button();
 
-        map_editor = new MapEditor('#map_editor', {
+        map_editor = new MapEditor('#map_editor', $.extend(example_data, {
             map_id : 'bleh123',
             image : 'http://farm4.static.flickr.com/3433/3986710128_48958f7369_o.jpg', 
             events : {
+                init : function () {
+                    this.selectNode();
+                },
                 polygonCreated : function () {
                     var poly = this.currentPolygon;
                     poly.data  = $.extend(poly.data, {
@@ -38,7 +41,7 @@
                     createInspector();
                 }
             }
-        });
+        }));
 
         sidebar.bind('click', function (e) {
             var target = $(e.target);
