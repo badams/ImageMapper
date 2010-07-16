@@ -149,6 +149,12 @@ MapEditor.prototype = {
         } else {
             this.polygons.splice(index, 1);
         }
+
+        $(this.mask_map).find('area').remove();
+
+        for (var p = 0, l = this.polygons.length; p < l; p++) {
+            this.createMapArea(this.polygons[p]);
+        }
    
         this.selectNode(); 
         this.drawPolys();
