@@ -2,6 +2,7 @@
 (function ($) {
     // {{{ Properties
     var map_editor = null;
+    var map_data = {};
     var map_viewer = null;
     var sidebar = null;
     // }}}
@@ -21,27 +22,28 @@
             handle : 'ul'
         });
 
-        $('li.toolbar button').button();
+        $('li.toolbar button').button().click(function () {
+            var data = map_editor.exportData();
 
-        map_editor = new MapEditor('#map_editor', $.extend(example_data, {
-            map_id : 'bleh123',
-            image : 'http://farm4.static.flickr.com/3433/3986710128_48958f7369_o.jpg', 
-            events : {
-                init : function () {
-                    this.selectNode();
-                },
-                polygonCreated : function () {
-                    var poly = this.currentPolygon;
-                    poly.data  = $.extend(poly.data, {
-                        name : 'Line-' + map_editor.getPolygonIndex(poly),
-                        href : '#some-anchor'
-                    });
-                },
-                selectNode : function () {
-                    createInspector();
+            $.post('example.php', data, function () {
+                alert('Saved');
+            })
+        });
+
+        
+        $.getJSON('example_data.json', function (data) {
+            map_data = $.extend(prepareDataForLoading(data), {
+                map_id : 'bleh123',
+                image : 'http://farm4.static.flickr.com/3433/3986710128_48958f7369_o.jpg', 
+                dataFilter : prepareDataForSaving,
+                events : {
+                    polygonCreated : preparePolygon,
+                    selectNode : createInspector
                 }
-            }
-        }));
+            }); 
+
+            map_editor = new MapEditor('#map_editor', map_data);
+        });
 
         sidebar.bind('click', function (e) {
             var target = $(e.target);
@@ -66,9 +68,8 @@
 
     });
     // }}}
-    // {{{ Api
-    // }}}
     // {{{ Support Methods
+    // {{{
     var createInspector = function () {
         var accord = document.createElement('div');
         var html = '';
@@ -95,10 +96,10 @@
             header : 'div.header',
             active : 'div.header[data-index=' + map_editor.currentPolygon.data.index + ']',
             change : function (e, ui) {
-                console.log(ui);
             }
         });
     };
+    // }}}
     // {{{ polygonDialog
     var polygonForm = function (polygon) {
         var html = '<form id="polygon_form" data-index="'+ map_editor.getPolygonIndex(polygon) +'">';
@@ -113,6 +114,71 @@
 
         return html;
     };
+    // }}}
+    // {{{prepareDataForSaving(data) 
+    var prepareDataForSaving = function (data) {
+        var post_data = {
+            id : this.options.map_id,
+            polygon_coords : [],
+            polygon_names : [],
+            polygon_hrefs : [],
+        };
+        
+        for (var p = 0, pl = this.polygons.length; p < pl; p++) {
+            var polygon = this.polygons[p], coords = [];
+            for (var n = 0, nl = polygon.nodes.length; n < nl; n++) {
+                coords.push(polygon.nodes[n].x); 
+                coords.push(polygon.nodes[n].y); 
+            }
+
+            post_data.polygon_coords.push(coords.join(', '));
+            post_data.polygon_names.push(polygon.data.name);
+            post_data.polygon_hrefs.push(polygon.data.href);
+        }
+
+        return post_data;
+    };
+    // }}}
+    // {{{prepareDataForLoading(data) 
+    var prepareDataForLoading = function (data) {
+        var import_data = {
+            map_id : data.id,
+            polygons : []
+        };
+        
+        for (var p = 0, pl = data.polygons.length; p < pl; p++) {
+            var polygon = {
+                data : {
+                    name : data.polygons[p].name,
+                    href : data.polygons[p].href,
+                },
+                nodes : []
+            };
+
+            var coords = data.polygons[p].nodes.split(', ');
+
+            for (var c = 0, cl = coords.length / 2; c < cl; c++) {
+                polygon.nodes.push({
+                    x : coords.shift(),
+                    y : coords.shift(),
+                });
+            }
+
+            import_data.polygons.push(polygon);
+        }
+
+        return import_data;
+    };
+    // }}}
+    // {{{ preparePolygon()
+    var preparePolygon = function () {
+        var poly = this.currentPolygon;
+        poly.data  = $.extend(poly.data, {
+            name : 'Line-' + map_editor.getPolygonIndex(poly),
+            href : '#some-anchor'
+        });
+    };
+    // }}}
     // }}}
 }).call(window, jQuery);
 // }}}
