@@ -16,7 +16,6 @@ var MapEditor = function (selector, options) {
     this.wrapper = jQuery(selector);
 
     this.buildContainer();
-    //this.createInspector();
 
     this.polygons = [];
     this.position = jQuery(this.container).offset();
@@ -137,11 +136,6 @@ MapEditor.prototype = {
         }
     },        
     // }}}
-    // {{{ createPolygon()
-    createPolygon : function () {
-                
-    },
-    // }}}
     // {{{ removePolygon()
     removePolygon : function (index) {
         if (1 === this.polygons.length) {
@@ -248,23 +242,18 @@ MapEditor.prototype = {
             image : this.options.image,
             width : this.options.width,
             height : this.options.height,
-            style : this.options.style     
+            style : this.options.style 
         };
 
         for (var p = 0, pl = this.polygons.length; p < pl; p++) {
-            var polygon = this.polygons[p], coords = [];
-
-            for (var n = 0, nl = polygon.nodes.length; n < nl; n++) {
-                coords.push(polygon.nodes[n].x); 
-                coords.push(polygon.nodes[n].y); 
-            }
-        
             data.polygons.push({
                 data : this.polygons[p].data,
-                nodes : this.polygons[p].nodes,
-                coords : coords.join(','),
-                title : polygon.data.title || '' 
+                nodes : this.polygons[p].nodes
             });
+        }
+
+        if ('function' === typeof this.options.dataFilter) {
+           data = this.options.dataFilter.call(this, data);
         }
 
         return data;
@@ -286,7 +275,6 @@ MapEditor.prototype = {
             }
 
             if (!this.drawing && !this.dragging) {
-                this.createPolygon();
                 this.drawing = true;
                 this.polygons.push(new Polygon());
                 this.selectNode();
