@@ -7,7 +7,7 @@ body {
 .ui-tabs .ui-tabs-nav .toolbar {float:right;}
 
 #imagemapper {
-    width : 755px;
+    width : 1280px;
 }
 
 #map_editor_wrapper {
@@ -38,7 +38,7 @@ body {
     font-size: 10px;
     margin: 1px 2px 0 0;
     padding : 2px 5px;
-} 
+}
 
 
 .sidebar dt {
@@ -59,8 +59,8 @@ body {
 }
 
 .image_mapper_container {
-    width : 500px;
-    height : 600px;
+    width : 900px;
+    height : 700px;
     overflow : scroll;
     cursor : crosshair;
 }
@@ -77,6 +77,3 @@ body {
 #map_editor area {
     cursor : move;
 }
-
-
-
